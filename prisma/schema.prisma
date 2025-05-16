@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String        @id @default(uuid())
+  name           String?
+  email          String        @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  image          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  medications    Medication[]
+  medicationLogs MedicationLog[]
+}
+
+model Medication {
+  id            String        @id @default(uuid())
+  name          String
+  dosage        String
+  frequency     String
+  timeOfDay     String[]
+  startDate     DateTime
+  endDate       DateTime?
+  instructions  String?
+  color         String?       @default("#3b82f6")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicationLogs MedicationLog[]
+
+  @@index([userId])
+}
+
+model MedicationLog {
+  id           String     @id @default(uuid())
+  taken        Boolean    @default(true)
+  skipped      Boolean    @default(false)
+  scheduledFor DateTime
+  takenAt      DateTime   @default(now())
+  note         String?
+  medicationId String
+  userId       String
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([medicationId])
+  @@index([userId])
+}
+
+model ReminderSettings {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  emailReminders     Boolean  @default(true)
+  reminderTimeOffset Int      @default(15)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
