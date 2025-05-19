@@ -49,10 +49,10 @@ model MedicationLog {
   note         String?
   medicationId String
   userId       String
-  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([medicationId])
   @@index([userId])

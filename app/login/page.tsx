@@ -20,9 +20,6 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    e.preventDefault();
-    setIsLoading(true);
-
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -31,7 +28,8 @@ export default function LoginPage() {
       const result = await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        redirect: false, // Prevent auto-redirect for manual handling
+        callbackUrl: '/dashboard', // Explicit callback URL to avoid redirect loops
       });
 
       if (result?.error) {
@@ -39,8 +37,10 @@ export default function LoginPage() {
         return;
       }
 
+      // Redirect manually after successful login
+      const callbackUrl = result?.url || '/dashboard'; // Use URL from NextAuth or fallback
       toast.success('Logged in successfully');
-      router.push('/dashboard');
+      router.push(callbackUrl);
       router.refresh();
     } catch (error) {
       toast.error('Something went wrong');
