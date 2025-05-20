@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Pill } from 'lucide-react';
+import { Loader2, Pill } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -117,7 +117,11 @@ export default function RegisterPage() {
 
             <div>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Creating account...' : 'Create account'}
+                {isLoading ? (
+                  <Loader2 className="animate-spin h-5 w-5" />
+                ) : (
+                  'Create account'
+                )}
               </Button>
             </div>
           </form>

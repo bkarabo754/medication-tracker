@@ -98,6 +98,30 @@ export async function POST(req: Request) {
       );
     }
 
+    // Get the current time
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    // Determine time of day based on hour
+    let timeOfDay;
+    if (currentHour >= 5 && currentHour < 12) {
+      timeOfDay = 'morning';
+    } else if (currentHour >= 12 && currentHour < 17) {
+      timeOfDay = 'afternoon';
+    } else if (currentHour >= 17 && currentHour < 21) {
+      timeOfDay = 'evening';
+    } else {
+      timeOfDay = 'night';
+    }
+
+    // Only allow logging if the medication is scheduled for the current time of day
+    if (!medication.timeOfDay.includes(timeOfDay)) {
+      return NextResponse.json(
+        { error: 'Medication is not scheduled for current time of day' },
+        { status: 400 }
+      );
+    }
+
     // Check if a log for this medication and time already exists
     const existingLog = await db.medicationLog.findFirst({
       where: {
@@ -119,7 +143,16 @@ export async function POST(req: Request) {
           taken: taken ?? false,
           skipped: skipped ?? false,
           note,
-          takenAt: new Date(),
+          takenAt: taken ? new Date() : existingLog.takenAt,
+        },
+        include: {
+          medication: {
+            select: {
+              name: true,
+              dosage: true,
+              color: true,
+            },
+          },
         },
       });
     } else {
@@ -132,6 +165,16 @@ export async function POST(req: Request) {
           skipped: skipped ?? false,
           scheduledFor: new Date(scheduledFor),
           note,
+          takenAt: taken ? new Date() : new Date(),
+        },
+        include: {
+          medication: {
+            select: {
+              name: true,
+              dosage: true,
+              color: true,
+            },
+          },
         },
       });
     }

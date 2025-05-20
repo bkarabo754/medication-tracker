@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Pill } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ModeToggle } from '../theme-toggle';
+import { useSession } from 'next-auth/react';
 
 export function LandingNavbar() {
+  const { data: session } = useSession();
+
   return (
     <motion.header
       className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md"
@@ -35,16 +38,24 @@ export function LandingNavbar() {
         </nav>
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <Link href="/login">
-            <Button variant="outline" size="sm" className="cursor-pointer">
-              Login
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button size="sm" className="cursor-pointer">
-              Sign Up
-            </Button>
-          </Link>
+          {session ? (
+            <Link href="/dashboard">
+              <Button size="sm" className="cursor-pointer">
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="outline" size="sm">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button size="sm">Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.header>

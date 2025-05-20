@@ -5,7 +5,7 @@ export interface Medication {
   frequency: string;
   timeOfDay: string[];
   startDate: Date;
-  endDate: Date | null;
+  endDate: Date | null; // Allows null values
   instructions?: string | null;
   color?: string | null;
   createdAt: Date;
@@ -18,12 +18,17 @@ export interface MedicationLog {
   taken: boolean;
   skipped: boolean;
   scheduledFor: Date;
-  takenAt: Date;
+  takenAt: Date | null; // Allows null values
   note?: string | null;
   medicationId: string;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  medication?: {
+    name: string;
+    dosage: string;
+    color?: string | null;
+  };
 }
 
 export interface ReminderSettings {

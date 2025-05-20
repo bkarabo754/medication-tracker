@@ -1,30 +1,34 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getMedication, updateMedication } from '@/services/api';
 import { MedicationForm } from '@/components/medications/medication-form';
-import { Medication } from '@prisma/client';
+import { Medication } from '@/types';
 
-export default function EditMedicationPage({
-  params,
-}: {
-  params: { medicationId: string };
-}) {
+export default function EditMedicationPage() {
   const router = useRouter();
+  const params = useParams();
+  const medicationIdParam = params?.medicationId;
+  const medicationId = Array.isArray(medicationIdParam)
+    ? medicationIdParam[0]
+    : medicationIdParam;
+
   const [medication, setMedication] = useState<Medication | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchMedication = async () => {
+      if (!medicationId) return;
+
       try {
         setIsLoading(true);
-        const data = await getMedication(params.medicationId);
+        const data = await getMedication(medicationId);
         setMedication(data);
       } catch (error) {
         console.error('Error fetching medication:', error);
@@ -36,12 +40,14 @@ export default function EditMedicationPage({
     };
 
     fetchMedication();
-  }, [params.medicationId, router]);
+  }, [medicationId]); // removed router from deps to avoid re-renders
 
   const handleSubmit = async (data: any) => {
+    if (!medicationId) return;
+
     try {
       setIsSubmitting(true);
-      await updateMedication(params.medicationId, data);
+      await updateMedication(medicationId, data);
       toast.success('Medication updated successfully');
       router.push('/dashboard/medications');
     } catch (error) {
@@ -71,7 +77,7 @@ export default function EditMedicationPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <motion.div
         className="flex items-center gap-2"
         initial={{ opacity: 0, y: 20 }}

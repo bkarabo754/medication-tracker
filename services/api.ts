@@ -1,5 +1,6 @@
 import { axiosInstance } from '@/lib/axios';
 import { Medication, MedicationLog, ReminderSettings } from '@/types';
+import { ISODateString } from 'next-auth';
 
 // Authentication
 export const registerUser = async (data: {
@@ -7,113 +8,131 @@ export const registerUser = async (data: {
   email: string;
   password: string;
 }) => {
-  const response = await axiosInstance.post('/api/register', data);
-  return response.data;
+  try {
+    const response = await axiosInstance.post('/api/register', data);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.error || 'Failed to register user');
+  }
 };
 
 // Medications
-export const getMedications = async () => {
-  const response = await axiosInstance.get<Medication[]>('/api/medications');
-  return response.data;
+export const getMedications = async (): Promise<Medication[]> => {
+  try {
+    const response = await axiosInstance.get('/api/medications');
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to fetch medications'
+    );
+  }
 };
 
-export const getMedication = async (id: string) => {
-  const response = await axiosInstance.get<Medication>(
-    `/api/medications/${id}`
-  );
-  return response.data;
+export const getMedication = async (id: string): Promise<Medication> => {
+  try {
+    const response = await axiosInstance.get(`/api/medications/${id}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to fetch medication'
+    );
+  }
 };
 
-export const createMedication = async (data: Partial<Medication>) => {
-  const response = await axiosInstance.post<Medication>(
-    '/api/medications',
-    data
-  );
-  return response.data;
-};
-
-export const updateMedication = async (
-  id: string,
+export const createMedication = async (
   data: Partial<Medication>
-) => {
-  const response = await axiosInstance.patch<Medication>(
-    `/api/medications/${id}`,
-    data
-  );
-  return response.data;
-};
-
-export const deleteMedication = async (id: string) => {
-  const response = await axiosInstance.delete(`/api/medications/${id}`);
-  return response.data;
+): Promise<Medication> => {
+  try {
+    const response = await axiosInstance.post('/api/medications', data);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to create medication'
+    );
+  }
 };
 
 // Medication Logs
 export const getMedicationLogs = async (params?: {
   medicationId?: string;
-  startDate?: string;
-  endDate?: string;
-}) => {
-  const queryParams = new URLSearchParams();
-
-  if (params?.medicationId) {
-    queryParams.append('medicationId', params.medicationId);
+  startDate?: ISODateString;
+  endDate?: ISODateString;
+}): Promise<MedicationLog[]> => {
+  try {
+    const response = await axiosInstance.get('/api/medication-logs', {
+      params,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to create medication'
+    );
   }
-
-  if (params?.startDate) {
-    queryParams.append('startDate', params.startDate);
-  }
-
-  if (params?.endDate) {
-    queryParams.append('endDate', params.endDate);
-  }
-
-  const url = `/api/medication-logs${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-  const response = await axiosInstance.get<MedicationLog[]>(url);
-  return response.data;
-};
-
-// Update Medication Log
-export const updateMedicationLog = async (data: {
-  medicationId: string;
-  status: 'taken' | 'skipped';
-}) => {
-  const response = await axiosInstance.patch<MedicationLog>(
-    `/api/medication-logs/${data.medicationId}`,
-    { status: data.status }
-  );
-  return response.data;
 };
 
 export const createMedicationLog = async (data: {
   medicationId: string;
   taken?: boolean;
   skipped?: boolean;
-  scheduledFor: Date | string;
+  scheduledFor: ISODateString;
   note?: string;
-}) => {
-  const response = await axiosInstance.post<MedicationLog>(
-    '/api/medication-logs',
-    data
-  );
-  return response.data;
+}): Promise<MedicationLog> => {
+  try {
+    const response = await axiosInstance.post('/api/medication-logs', data);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to create medication'
+    );
+  }
+};
+
+export const updateMedication = async (
+  id: string,
+  data: Partial<Medication>
+): Promise<Medication> => {
+  try {
+    const response = await axiosInstance.patch(`/api/medications/${id}`, data);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to update medication'
+    );
+  }
+};
+
+export const deleteMedication = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`/api/medications/${id}`);
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to delete medication'
+    );
+  }
 };
 
 // Reminder Settings
-export const getReminderSettings = async () => {
-  const response = await axiosInstance.get<ReminderSettings>(
-    '/api/reminder-settings'
-  );
-  return response.data;
+export const getReminderSettings = async (): Promise<ReminderSettings> => {
+  try {
+    const response = await axiosInstance.get('/api/reminder-settings');
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to fetch reminder settings'
+    );
+  }
 };
 
 export const updateReminderSettings = async (data: {
   emailReminders?: boolean;
   reminderTimeOffset?: number;
-}) => {
-  const response = await axiosInstance.patch<ReminderSettings>(
-    '/api/reminder-settings',
-    data
-  );
-  return response.data;
+}): Promise<ReminderSettings> => {
+  try {
+    const response = await axiosInstance.patch('/api/reminder-settings', data);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || 'Failed to update reminder settings'
+    );
+  }
 };

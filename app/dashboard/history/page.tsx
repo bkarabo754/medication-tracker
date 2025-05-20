@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Calendar as CalendarIcon, CheckCircle, XCircle } from 'lucide-react';
@@ -14,11 +14,12 @@ import {
 } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getMedicationLogs } from '@/services/api';
-import { MedicationLog } from '@prisma/client';
+import { MedicationLog } from '@/types';
 import { cn } from '@/lib/utils';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function HistoryPage() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<MedicationLog[]>([]);
   const [date, setDate] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
@@ -50,7 +51,7 @@ export default function HistoryPage() {
   }, [date]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 sm:px-6 md:px-8 py-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -63,7 +64,7 @@ export default function HistoryPage() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={'outline'}
+                variant="outline"
                 className={cn('w-[240px] justify-start text-left font-normal')}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -89,7 +90,7 @@ export default function HistoryPage() {
       {isLoading ? (
         <div className="flex justify-center py-10">
           <div className="animate-pulse text-muted-foreground">
-            Loading history...
+            <LoadingSpinner />
           </div>
         </div>
       ) : logs.length === 0 ? (
@@ -120,12 +121,14 @@ export default function HistoryPage() {
                     <div
                       className="w-3 h-3 rounded-full"
                       style={{
-                        backgroundColor: log.medication.color || '#3b82f6',
+                        backgroundColor: log.medication?.color || '#3b82f6',
                       }}
                     />
-                    <div className="font-medium">{log.medication.name}</div>
+                    <div className="font-medium">
+                      {log.medication?.name || 'Unknown Medication'}
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {log.medication.dosage}
+                      {log.medication?.dosage}
                     </div>
                   </div>
                   <div className="mt-1 text-sm text-muted-foreground">

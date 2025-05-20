@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function MedicationsPage() {
   const [medications, setMedications] = useState<Medication[]>([]);
@@ -85,7 +86,7 @@ export default function MedicationsPage() {
             Your Medications
           </h1>
           <Link href="/dashboard/medications/new">
-            <Button size="sm" className="w-full sm:w-auto">
+            <Button size="sm" className="w-full sm:w-auto cursor-pointer">
               <PlusCircle className="mr-2 h-4 w-4" />
               Add New
             </Button>
@@ -121,7 +122,7 @@ export default function MedicationsPage() {
       {isLoading ? (
         <div className="flex justify-center py-10">
           <div className="animate-pulse text-muted-foreground">
-            Loading your medications...
+            <LoadingSpinner />
           </div>
         </div>
       ) : filteredMeds.length === 0 ? (
@@ -133,7 +134,7 @@ export default function MedicationsPage() {
           </p>
           {!searchQuery && (
             <Link href="/dashboard/medications/new">
-              <Button>
+              <Button className="cursor-pointer">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Medication
               </Button>
@@ -167,13 +168,21 @@ export default function MedicationsPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-2">
                 <Link href={`/dashboard/medications/${med.id}`}>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer"
+                  >
                     Edit
                   </Button>
                 </Link>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="cursor-pointer"
+                    >
                       Delete
                     </Button>
                   </AlertDialogTrigger>

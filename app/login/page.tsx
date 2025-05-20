@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Pill } from 'lucide-react';
+import { Loader2, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -138,10 +138,14 @@ export default function LoginPage() {
             <div>
               <Button
                 type="submit"
-                className="w-full cursor-pointer"
+                className="w-full cursor-pointer flex items-center justify-center"
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {isLoading ? (
+                  <Loader2 className="animate-spin h-5 w-5" />
+                ) : (
+                  'Sign in'
+                )}
               </Button>
             </div>
           </form>
