@@ -22,6 +22,7 @@ import {
 } from '@/services/api';
 import { Medication, MedicationLog } from '@/types';
 import { DashboardHeader } from '@/components/dashboard/dashboard-stats';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function DashboardPage() {
   const [medications, setMedications] = useState<Medication[]>([]);
@@ -145,7 +146,7 @@ export default function DashboardPage() {
           {isLoading ? (
             <div className="flex justify-center py-10">
               <div className="animate-pulse text-muted-foreground">
-                Loading your medications...
+                <LoadingSpinner />
               </div>
             </div>
           ) : medications.length === 0 ? (

@@ -117,7 +117,7 @@ export async function POST(req: Request) {
     // Only allow logging if the medication is scheduled for the current time of day
     if (!medication.timeOfDay.includes(timeOfDay)) {
       return NextResponse.json(
-        { error: 'Medication is not scheduled for current time of day' },
+        { error: `This medication is not scheduled for ${timeOfDay}` },
         { status: 400 }
       );
     }
@@ -165,7 +165,7 @@ export async function POST(req: Request) {
           skipped: skipped ?? false,
           scheduledFor: new Date(scheduledFor),
           note,
-          takenAt: taken ? new Date() : new Date(),
+          takenAt: taken ? new Date() : undefined,
         },
         include: {
           medication: {

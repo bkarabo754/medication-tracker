@@ -229,7 +229,7 @@ export function MedicationForm({
               name="timeOfDay"
               render={() => (
                 <FormItem>
-                  <div className="mb-2">
+                  <div className="mb-2 space-y-2">
                     <FormLabel>Time of Day</FormLabel>
                     <FormDescription>
                       Select when you need to take this medication
@@ -392,7 +392,11 @@ export function MedicationForm({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="cursor-pointer"
+            >
               {isSubmitting
                 ? 'Saving...'
                 : medication

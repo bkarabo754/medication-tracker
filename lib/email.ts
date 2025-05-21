@@ -22,7 +22,7 @@ export async function sendMedicationReminder({
 }: MedicationReminderProps) {
   try {
     const data = await resend.emails.send({
-      from: 'Medication Tracker <notifications@medication-tracker.com>',
+      from: 'Medication Tracker <notifications@medication-tracker.dev>',
       to: recipientEmail,
       subject: `Reminder: Time to take ${medicationName}`,
       html: `
