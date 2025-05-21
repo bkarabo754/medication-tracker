@@ -115,12 +115,12 @@ export async function POST(req: Request) {
     }
 
     // Only allow logging if the medication is scheduled for the current time of day
-    if (!medication.timeOfDay.includes(timeOfDay)) {
-      return NextResponse.json(
-        { error: `This medication is not scheduled for ${timeOfDay}` },
-        { status: 400 }
-      );
-    }
+    // if (!medication.timeOfDay.includes(timeOfDay)) {
+    //   return NextResponse.json(
+    //     { error: `This medication is not scheduled for ${timeOfDay}` },
+    //     { status: 400 }
+    //   );
+    // }
 
     // Check if a log for this medication and time already exists
     const existingLog = await db.medicationLog.findFirst({
