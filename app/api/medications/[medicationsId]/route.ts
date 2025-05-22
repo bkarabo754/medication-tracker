@@ -125,5 +125,3 @@ export async function DELETE(
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
-
-// Similar fixes apply to PATCH and DELETE methods
