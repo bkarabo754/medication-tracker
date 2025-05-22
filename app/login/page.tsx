@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react'; // Ensure signIn is imported
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,6 +25,7 @@ export default function LoginPage() {
     const password = formData.get('password') as string;
 
     try {
+      console.log('Attempting signIn...');
       const result = await signIn('credentials', {
         email,
         password,
@@ -32,24 +33,39 @@ export default function LoginPage() {
         callbackUrl: '/dashboard',
       });
 
+      // ********************************************
+      // ADD THESE CRITICAL CONSOLE LOGS
+      console.log('--- SIGN IN RESULT START ---');
+      console.log('Result object:', result);
+      console.log('Result.ok:', result?.ok);
+      console.log('Result.url:', result?.url);
+      console.log('Result.error:', result?.error);
+      console.log('--- SIGN IN RESULT END ---');
+      // ********************************************
+
       if (result?.error) {
         toast.error(
           result.error === 'CredentialsSignin'
             ? 'Invalid credentials'
-            : 'Login failed'
+            : `Login failed: ${result.error}` // More specific error
         );
         return;
       }
 
       if (result?.ok && result?.url) {
         toast.success('Logged in successfully');
+        console.log('Attempting router.push to:', result.url); // Log before push
         router.push(result.url);
       } else {
-        toast.error('Unexpected error during login');
+        // This 'else' means result.ok is false or result.url is null, but no explicit error string
+        toast.error(
+          'Unexpected login outcome: result.ok was false or url was null'
+        );
+        console.error('Unexpected login outcome:', result);
       }
     } catch (error) {
-      toast.error('Something went wrong');
-      console.error('Login error:', error);
+      toast.error('Something went wrong during login (catch block)');
+      console.error('Login catch error:', error);
     } finally {
       setIsLoading(false);
     }
