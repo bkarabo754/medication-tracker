@@ -8,7 +8,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
@@ -19,12 +19,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         const user = await db.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
+          where: { email: credentials.email },
         });
 
-        if (!user || !user?.hashedPassword) {
+        if (!user || !user.hashedPassword) {
           throw new Error('Invalid credentials');
         }
 
@@ -37,7 +35,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
-        return user;
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        };
       },
     }),
   ],
@@ -53,34 +55,21 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ token, session }) {
       if (token) {
-        session.user.id = token.id as string;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.picture;
+        session.user = {
+          id: token.id as string,
+          name: token.name,
+          email: token.email,
+        };
       }
-
       return session;
     },
     async jwt({ token, user }) {
-      const dbUser = await db.user.findFirst({
-        where: {
-          email: token.email || '',
-        },
-      });
-
-      if (!dbUser) {
-        if (user) {
-          token.id = user.id;
-        }
-        return token;
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
       }
-
-      return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        picture: dbUser.image,
-      };
+      return token;
     },
   },
 };

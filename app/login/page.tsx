@@ -28,23 +28,28 @@ export default function LoginPage() {
       const result = await signIn('credentials', {
         email,
         password,
-        redirect: false, // Prevent auto-redirect for manual handling
-        callbackUrl: '/dashboard', // Explicit callback URL to avoid redirect loops
+        redirect: false,
+        callbackUrl: '/dashboard',
       });
 
       if (result?.error) {
-        toast.error('Invalid credentials');
+        toast.error(
+          result.error === 'CredentialsSignin'
+            ? 'Invalid credentials'
+            : 'Login failed'
+        );
         return;
       }
 
-      // Redirect manually after successful login
-      const callbackUrl = result?.url || '/dashboard'; // Use URL from NextAuth or fallback
-      toast.success('Logged in successfully');
-      router.push(callbackUrl);
-      router.refresh();
+      if (result?.ok && result?.url) {
+        toast.success('Logged in successfully');
+        router.push(result.url);
+      } else {
+        toast.error('Unexpected error during login');
+      }
     } catch (error) {
       toast.error('Something went wrong');
-      console.error(error);
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
