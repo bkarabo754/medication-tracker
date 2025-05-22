@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 
 export async function GET(
   request: Request,
-  context: { params: { medicationsId: string } }
+  { params }: { params: { medicationsId: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,7 +14,7 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { medicationsId } = context.params;
+    const { medicationsId } = params;
 
     if (!medicationsId) {
       return new NextResponse('Medication ID is required', { status: 400 });
@@ -40,7 +40,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  context: { params: { medicationsId: string } }
+  { params }: { params: { medicationsId: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -50,7 +50,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { medicationsId } = context.params;
+    const { medicationsId } = params;
 
     if (!medicationsId) {
       return new NextResponse('Medication ID is required', { status: 400 });
@@ -85,7 +85,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  context: { params: { medicationsId: string } }
+  { params }: { params: { medicationsId: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -94,7 +94,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { medicationsId } = context.params;
+    const { medicationsId } = params;
 
     if (!medicationsId) {
       return new NextResponse('Medication ID is required', { status: 400 });
