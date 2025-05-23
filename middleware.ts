@@ -9,16 +9,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // --- NEW LOGS FOR ENV VARS ---
+  console.log('--- MIDDLEWARE ENV VARS ---');
+  console.log(
+    'process.env.NEXTAUTH_SECRET (length):',
+    process.env.NEXTAUTH_SECRET?.length
+  );
+  console.log('process.env.NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
+  console.log('--- END MIDDLEWARE ENV VARS ---');
+  // --- END NEW LOGS ---
+
   const token = await getToken({ req: request });
   const isAuthenticated = !!token;
 
   // ********************************************
-  // ADDED CONSOLE.LOG STATEMENTS - ENSURE THESE ARE DEPLOYED
+  // PREVIOUSLY ADDED CONSOLE.LOG STATEMENTS
   console.log('--- MIDDLEWARE LOG START ---');
   console.log('Middleware Path:', request.nextUrl.pathname);
   console.log('Middleware IsAuthenticated:', isAuthenticated);
   console.log('Middleware Token Exists:', !!token);
-  console.log('Full token (if exists):', token); // Log the full token to see its contents
+  // Do NOT log the full token here if you are in a production environment as it's sensitive
+  // console.log('Full token (if exists):', token);
   // ********************************************
 
   // Paths that require authentication
